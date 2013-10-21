@@ -29,7 +29,7 @@ describe AnagramSolver::Routing do
 
     let(:mapper) { ActionDispatch::Routing::Mapper.new }
     it "must respond_to :anagram_to_root_path!" do
-      mapper.private_methods.should include :anagram_to_root_path!
+      mapper.should respond_to :anagram_to_root_path!
     end
 
   end
