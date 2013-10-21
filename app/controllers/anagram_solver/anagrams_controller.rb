@@ -3,7 +3,7 @@ module AnagramSolver
   class AnagramsController < ApplicationController
 
     def index
-      @anagrams = Anagram.all
+      @anagrams = AnagramSolver::Anagram.all
     end
 
   end
