@@ -1,5 +1,5 @@
 require 'autotest/restart'
 
 Autotest.add_hook(:initialize) do |at|
-  at.add_exception("/dummy/**/*")
+  at.add_exception("/dummy")
 end
