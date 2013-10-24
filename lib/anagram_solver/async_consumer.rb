@@ -1,5 +1,22 @@
 module AnagramSolver
-  class AsyncConsumner
+  class AsyncConsumer
+
+    ##
+    # TODO: remove this
+    #
+    class << self
+      attr_reader :thread
+
+      def bg_process(to_be_processed, &block)
+        @thread = Thread.new(to_be_processed) { |p|
+          block.call(p)
+        }
+      end
+
+      def wait
+        thread.join
+      end
+    end
 
     attr_reader :queue, :thread
     attr_reader :block, :mutex

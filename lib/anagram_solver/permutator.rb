@@ -1,6 +1,4 @@
 # encoding: utf-8
-
-require 'thread'
 ##
 # Responsability
 # Create a hash of precomputed anagrams
@@ -8,20 +6,17 @@ require 'thread'
 # Rather than doing all the possible combinations
 # at run time.
 #
-# TODO:
-# Allow uses to configure their own no_anagrams_found msg.
-#
 # Here's a benchmark with, unpack and chars
 #
 # require 'benchmark'
-# 
+#
 # Benchmark.bm do |bm|
 #   bm.report("Unpack") do
 #     1000_000.times do
 #       "aabcjksjdsodoiio32j3k2jkjdksjkdsj,, ,fd,f,d, f,d,,---".gsub(/[,\t\r\n\f]*/, "").unpack("c*").sort.pack("c*")
 #     end
 #   end
-# 
+#
 #   bm.report("Chars") do
 #     1000_000.times do
 #       "aabcjksjdsodoiio32j3k2jkjdksjkdsj,, ,fd,f,d, f,d,,---".gsub(/[,\t\r\n\f]*/, "").chars.sort.join
@@ -33,30 +28,26 @@ require 'thread'
 # Unpack 37.620000   0.080000  37.700000 ( 37.781407)
 # Chars 65.020000   0.200000  65.220000 ( 65.300449)
 #
+
 module AnagramSolver
+  require 'anagram_solver/async_consumer'
   class Permutator
 
-    attr_reader :word_list, :precomputed_list, :precomputed_list_old, :consumer
+    attr_reader :word_list, :precomputed_list
+    attr_reader :precomputed_list_old, :bg_process
 
     ##
-    # Initializes word_list instance variable
-    # Initializes precomputed_list assigning it
-    # a hash whose default values, if no key is found,
-    # is an empty array.
-    # This allows us to push ( << OR += ) values to this hash.
+    # Initializes word_list instance variable, precomputed_list
+    # assigning it a hash whose default values is an empty array.
+    #
+    # Precomputes word_list in underneath the hood. (i.e A in-process
+    # thread that AsyncConsumer offers. )
     #
     def initialize(word_list)
-      @word_list    = word_list
+      @word_list        = word_list
       @precomputed_list = Hash.new([])
+      @bg_process       = AsyncConsumer.bg_process(self) { |s| s.precompute }
       @precomputed_list_old = Hash.new([])
-      @consumer = Thread.new {
-        precompute
-      }
-    end
-
-    def wait(time="")
-      ttw = time.to_i unless time
-      consumer.join(ttw)
     end
 
     ##
@@ -93,7 +84,7 @@ module AnagramSolver
     # It is also slices words with accents, such as:
     # émigré's
     # Ångström
-    # 
+    #
     # If you're on UNIX-like there might exist a dict
     # word in see /usr/share/dict/words
     #
@@ -103,14 +94,15 @@ module AnagramSolver
     #
     def precompute
       word_list.each do |line|
-        # word = line.chomp
         word = line.slice(/\b['\wÀ-ÖÙ-Üà-öù-ü]+/i)
         precomputed_list[sort!(word)] += [word]
       end
     end
 
     ##
-    # Orders any given word in alphabetical order.
+    # Orders any given word in alphabetical order by
+    # unpacking them (i.e spliting ) sort and packing
+    # them again ( i.e joining ).
     # This facilitates when trying to find combinations
     # for words, as we only have to sort once
     # and return results by calling a hash with a sorted key.

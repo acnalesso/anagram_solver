@@ -8,7 +8,7 @@ describe AnagramSolver::Permutator do
   let(:jolie) { IO.foreach(File.expand_path("../../../support/fixed_list", __FILE__)) }
   let(:steve) { AnagramSolver::Permutator.new jolie }
 
-  before { steve.wait }
+  before { steve.bg_process.join(2) }
 
   it "must keep track of word_list" do
     steve.should respond_to :word_list
@@ -31,18 +31,16 @@ describe AnagramSolver::Permutator do
 
   it "must slice 'line' properly" do
     rose = AnagramSolver::Permutator.new %w{ ,,test ,,tste,, tset,,0 }
-    rose.wait
+    rose.bg_process.join(2)
     rose.precomputed_list["estt"].should have(3).words
   end
 
   it "must slice words with accent" do
     rose = AnagramSolver::Permutator.new %w{ igré'sém, émgréi's Ånöm éigmré's}
-    rose.wait
+    rose.bg_process.join(2)
+
     key = rose.sort!("émigré's")
     rose.precomputed_list[key].should have(3).words
   end
 
-  xit "IMPLEMENT IN PROCESS QUEUE" do
-
-  end
 end
