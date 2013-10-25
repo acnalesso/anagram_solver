@@ -28,15 +28,8 @@ describe AnagramSolver::Permutator do
     steve.precomputed_list["estt"].should have(1).words
   end
 
-
-  it "must slice 'line' properly" do
-    rose = AnagramSolver::Permutator.new %w{ ,,test ,,tste,, tset,,0 }
-    rose.bg_process.join(2)
-    rose.precomputed_list["estt"].should have(3).words
-  end
-
   it "must slice words with accent" do
-    rose = AnagramSolver::Permutator.new %w{ igré'sém, émgréi's Ånöm éigmré's}
+    rose = AnagramSolver::Permutator.new %w{ igré'sém émgréi's Ånöm éigmré's}
     rose.bg_process.join(2)
 
     key = rose.sort!("émigré's")

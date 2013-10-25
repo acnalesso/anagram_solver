@@ -93,10 +93,9 @@ module AnagramSolver
     # open-std.org/jtc1/sc22/wg21/docs/papers/2003/n1500.html
     #
     def precompute
-      print "FIX ME"
       word_list.each do |line|
+        # word = line.chomp.slice(/\b['\wÀ-ÖÙ-Üà-öù-ü]+/i)
         word = line.chomp
-        word = line.chomp.slice(/\b['\wÀ-ÖÙ-Üà-öù-ü]+/i)
         precomputed_list[sort!(word)] += [word]
       end
     end

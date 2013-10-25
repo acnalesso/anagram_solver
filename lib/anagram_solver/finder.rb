@@ -12,7 +12,6 @@ module AnagramSolver
     class << self
       def find_for(key, list)
         timer { look_up(list, key) }
-        puts anagrams_found!
         anagrams_found!
       end
 

@@ -11,7 +11,6 @@ module AnagramSolver
   end
 
   class Finder
-    def self.find_for(word, obj); end
   end
 
   class Permutator
@@ -133,6 +132,7 @@ describe AnagramSolver::Middleware do
         let(:mid) { AnagramSolver::Middleware.new(vendetta) }
 
         it "must not call the next middleware" do
+          AnagramSolver::Finder.stub(:find_for)
           mid.stub(:params).and_return(env)
           vendetta.should_not_receive(:call)
           mid.call(env)
