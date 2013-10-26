@@ -1,5 +1,4 @@
-require "anagram_solver/engine"
-require "anagram_solver/routing"
+require "anagram_solver/loader"
 
 module AnagramSolver
 end

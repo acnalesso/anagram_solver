@@ -7,7 +7,7 @@ require 'anagram_solver/middleware'
 module AnagramSolver
   Middleware.class_eval do
     public( :word, :params, :tempfile,
-            :uploaded_tempfile?, :permutator )
+            :uploaded_tempfile?, :precompute! )
   end
 
   class Finder
@@ -23,9 +23,9 @@ end
 describe AnagramSolver::Middleware do
   let(:env) do
     {
-      "PATH_INFO" => "/anagrams_search",
+      "PATH_INFO" => "/search",
       "rack.input" => StringIO.new('{ "word": "test"}'),
-      "new_anagram" => { "dict" => { tempfile: "text.txt" } }
+      "dict" => { tempfile: "text.txt" }
     }
   end
 
@@ -58,23 +58,23 @@ describe AnagramSolver::Middleware do
     context "Uploading a file","Permutator" do
 
       before {
-        env["PATH_INFO"] = "/anagrams"
+        env["PATH_INFO"] = "/anagram_solver"
         rack.stub(:env).and_return(env)
         rack.stub(:params).and_return(env)
       }
 
-      it { rack.should respond_to :permutator }
+      it { rack.should respond_to :precompute! }
 
-      it { rack.permutator.should be_kind_of AnagramSolver::Permutator }
+      it { rack.precompute!.should be_kind_of AnagramSolver::Permutator }
 
       it {
         rack.call(env)
-        rack.instance_variable_get(:@permutator).should_not be_nil
+        rack.instance_variable_get(:@precomputed).should_not be_nil
       }
 
       it { rack.should respond_to :params }
       it { rack.should respond_to :tempfile }
-      
+
       it {
         rack.tempfile.should eq("text.txt")
       }
@@ -120,7 +120,7 @@ describe AnagramSolver::Middleware do
       end
 
       it "must search if search_path?" do
-        r = [200, { "Content-Type" => "application/json" }, ["opts"].to_json]
+        r = [200, { "Content-Type" => "application/json" }, ["opts"]]
 
         tim.stub(:anagrams_result).and_return("opts")
         tim.search?.should eq(r)
@@ -133,8 +133,10 @@ describe AnagramSolver::Middleware do
 
         it "must not call the next middleware" do
           AnagramSolver::Finder.stub(:find_for)
+
           mid.stub(:params).and_return(env)
           vendetta.should_not_receive(:call)
+
           mid.call(env)
         end
 
@@ -143,9 +145,9 @@ describe AnagramSolver::Middleware do
       context "Anagram not found" do
 
         it "must return a notice" do
-          notice = "No anagrams found for :word"
+          notice = "0 anagrams found for :word"
           AnagramSolver::Finder.stub(:find_for).and_return(notice)
-          r = [200, { "Content-Type" => "application/json" }, [notice].to_json]
+          r = [200, { "Content-Type" => "application/json" }, [notice]]
 
           tim.search?.should eq(r)
         end

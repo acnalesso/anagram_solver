@@ -1,0 +1,38 @@
+body{
+  margin: 0;
+}
+
+.results {
+  width: 500px;
+  margin: 5px;
+  display: table;
+  background: black;
+  margin-bottom: 10px;
+  border: white dotted 2px;
+}
+
+span {
+  float: left;
+  width: 100%;
+  margin-bottom: 2px;
+  background: white;
+}
+
+#word {
+  border: solid 1px black;
+  outline: 0;
+  width: 20%;
+  margin: 7px;
+  padding-left: 5px;
+}
+
+#dict {
+  float: left;
+}
+
+.loaded_in {
+  float: left;
+  width: 100px;
+  height: 20px;
+  line-height: 20px;
+}

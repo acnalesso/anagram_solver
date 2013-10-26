@@ -10,3 +10,6 @@ spec/dummy/.sass-cache
 *.swp
 
 spec/tmp/public/uploads/**
+
+different_name
+another_name

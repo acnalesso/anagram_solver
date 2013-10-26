@@ -6,10 +6,12 @@ require 'rack/request'
 # alot.
 module AnagramSolver
   class Middleware
-    attr_reader :app
+    attr_reader :app, :precomputed
 
     def initialize(app)
-      @app = app
+      @app          = app
+      @precomputed  = ""
+      @env          = ""
     end
 
     ##
@@ -28,7 +30,7 @@ module AnagramSolver
     # if search_path?
     #
     # When trying to find an anagram AnagramSolver::Finder
-    # either returns the anagrams found for a particular word or
+    # returns either anagrams found for a particular word or
     # it returns a notice (i.e a message ) saying that No anagrams
     # was found for that particular word.
     #
@@ -45,7 +47,7 @@ module AnagramSolver
       # false otherwise.
       #
       def search_path?
-        env["PATH_INFO"] =~ /search/
+        env["PATH_INFO"] == "/search"
       end
 
       ##
@@ -54,7 +56,8 @@ module AnagramSolver
       # returns anagrams_result.
       #
       def response
-        [200, { "Content-Type" => "application/json" }, [anagrams_result].to_json]
+        response = anagrams_result
+        [200, { "Content-Type" => "application/json" }, [response]]
       end
 
 
@@ -64,7 +67,7 @@ module AnagramSolver
       # saying that no anagram was found.
       #
       def anagrams_result
-        Finder.find_for(word, @permutator)
+        Finder.find_for(word, @precomputed)
       end
 
 
@@ -73,9 +76,10 @@ module AnagramSolver
       # then parse it and get the raw word.
       #
       def word
-        _word_ = JSON.parse(env["rack.input"].string)
-        _word_["word"]
+        word = JSON.parse(env["rack.input"].string)
+        word["word"]
       end
+
 
       ##
       # Rack::Request rocks!!
@@ -90,16 +94,16 @@ module AnagramSolver
       # from StringIO for us.
       #
       def tempfile
-        params["new_anagram"]["dict"][:tempfile]
+        params["dict"][:tempfile]
       end
 
       def uploaded_tempfile?
-        permutator if (env["PATH_INFO"] == "/anagrams")
+        precompute! if env["PATH_INFO"] == "/anagram_solver"
       end
 
 
-      def permutator
-        @permutator = Permutator.new(tempfile)
+      def precompute!
+        @precomputed = Permutator.new(tempfile)
       end
 
   end

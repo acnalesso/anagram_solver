@@ -1,0 +1,16 @@
+<%= form_tag "/anagram_solver", id: :new_anagram, method: :post, multipart: true do %>
+  <%= file_field_tag :dict %><span class="loaded_in"></span>
+  <div class="actions">
+    <%= submit_tag "Load new dictionary" %>
+  </div>
+<% end %>
+
+<div id="search_area">
+  <%= form_tag "/search", method: :get, id: :search do %>
+    <%= text_field_tag :word %>
+    <%= submit_tag :find %>
+  <% end %>
+</div>
+
+<div id="results">
+</div>

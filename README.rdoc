@@ -1,3 +1,19 @@
 = AnagramSolver
 
+A Ruby gem for that plugs into Rails.
+The gem allows for the upload of a text file which will be
+the dictionary file.  The dictionary file consists of a
+list of words. Each word is on separate line.
+The gem provides an input where a user can input a word of their
+choice. On hitting enter (or clicking a button) the webapp should find all
+anagrams, if any exist, of the word and display them. If no anagrams are
+found it should display “No anagrams found for <word>”.
+
+= TODO
+
+Create an Instrumentation to save searched anagrams.
+Save tempfile into root_path/public/uploads, and keep
+track of them, so that it can be displayed as a list
+and a user can select that particular word list to use it.
+
 This project rocks and uses MIT-LICENSE.
