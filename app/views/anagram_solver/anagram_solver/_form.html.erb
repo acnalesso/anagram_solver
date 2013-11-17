@@ -1,7 +1,7 @@
 <%= form_tag "/anagram_solver", id: :new_anagram, method: :post, multipart: true do %>
   <%= file_field_tag :dict %><span class="loaded_in"></span>
   <div class="actions">
-    <%= submit_tag "Load new dictionary" %>
+    <%= submit_tag "Load new dictionary", id: :upload %>
   </div>
 <% end %>
 

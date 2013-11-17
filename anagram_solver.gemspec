@@ -10,7 +10,9 @@ Gem::Specification.new do |s|
   s.authors     = ["Antonio C Nalesso Moreira"]
   s.email       = ["acnalesso@yahoo.co.uk"]
   s.homepage    = "https://www.github.com/acnalesso/anagram_solver"
-  s.summary     = "Reads a dictionary file and allows a user to find anagrams."
+  s.summary = " Finds anagrams for a given word."
+  s.description = "Reads a dictionary file and allows a user to find anagrams."
+  s.licenses    = ['MIT']
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
   s.test_files = Dir["test/**/*"]
@@ -20,5 +22,4 @@ Gem::Specification.new do |s|
   s.add_development_dependency "bson_ext"
   s.add_development_dependency "mongoid"
   s.add_development_dependency "rspec"
-  s.add_development_dependency "rspec-rails"
 end

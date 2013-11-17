@@ -1,6 +1,8 @@
+require File.expand_path "../../../rspec-core/lib/rspec/autorun", __FILE__
 SanitizeHelper = Module.new
 TagHelper = Module.new
 
+# require 'capybara/rspec'
 require 'active_support/concern'
 require 'active_support/core_ext/string/inflections'
 require 'action_view/helpers/text_helper'
@@ -35,3 +37,8 @@ class ApplicationController
   end
 
 end
+
+RSpec.configure do |c|
+  c.filter_run_excluding example_group: ->(m) { m[:file_path].include?('dummy') }
+end
+

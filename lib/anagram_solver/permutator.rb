@@ -1,36 +1,16 @@
 # encoding: utf-8
-##
+#
 # Responsability
 # Create a hash of precomputed anagrams
 # to facilitate when searching for one.
 # Rather than doing all the possible combinations
 # at run time.
 #
-# Here's a benchmark with, unpack and chars
-#
-# require 'benchmark'
-#
-# Benchmark.bm do |bm|
-#   bm.report("Unpack") do
-#     1000_000.times do
-#       "aabcjksjdsodoiio32j3k2jkjdksjkdsj,, ,fd,f,d, f,d,,---".gsub(/[,\t\r\n\f]*/, "").unpack("c*").sort.pack("c*")
-#     end
-#   end
-#
-#   bm.report("Chars") do
-#     1000_000.times do
-#       "aabcjksjdsodoiio32j3k2jkjdksjkdsj,, ,fd,f,d, f,d,,---".gsub(/[,\t\r\n\f]*/, "").chars.sort.join
-#     end
-#   end
-# end
-#
-# user     system      total        real
-# Unpack 37.620000   0.080000  37.700000 ( 37.781407)
-# Chars 65.020000   0.200000  65.220000 ( 65.300449)
-#
+# See ./benchmark/permutator for more info.
 
+require 'anagram_solver/async_consumer'
 module AnagramSolver
-  require 'anagram_solver/async_consumer'
+
   class Permutator
 
     attr_reader :word_list, :precomputed_list
@@ -92,11 +72,22 @@ module AnagramSolver
     # Fear not:
     # open-std.org/jtc1/sc22/wg21/docs/papers/2003/n1500.html
     #
+    # This snippet here looks a bit odd, let dissect it.
+    # line = "Hello there"
+    #
+    # This is the same as line =~ /\S+/, However Ruby 1.9 >
+    # provides this awesome way to do it.
+    # line[/\S+/]
+    #
+    # Then $~[0] gets the first argument matched, which
+    # here is Hello.
+    #
+    # This is incredibily fast, please see benchmark
+    # ./benchmark/permutator.rb
+    #
     def precompute
       word_list.each do |line|
-        # word = line.chomp.slice(/\b['\wÀ-ÖÙ-Üà-öù-ü]+/i)
-        word = line.chomp
-        precomputed_list[sort!(word)] += [word]
+        precomputed_list[sort!(line[/\S+/])] += [$~[0]]
       end
     end
 

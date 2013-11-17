@@ -34,6 +34,7 @@ describe AnagramSolver::Permutator do
 
     key = rose.sort!("émigré's")
     rose.precomputed_list[key].should have(3).words
+    puts rose.precomputed_list
   end
 
 end
